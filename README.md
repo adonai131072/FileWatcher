@@ -1,0 +1,2 @@
+# FileWatcher
+QWebEngine・QWebChannelでGUIを構築したデスクトップアプリのサンプル
