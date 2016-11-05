@@ -1,0 +1,69 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="qrc:///webix/webix.css" type="text/css" media="screen" charset="utf-8">
+        <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+        <script type="text/javascript" src="qrc:///jquery-3.1.0.min.js"></script>
+        <script src="qrc:///webix//webix.js" type="text/javascript" charset="utf-8"></script>
+        <style type="text/css">
+            html {
+                height: 100%;
+            }
+            body {
+                height: 100%;
+                margin: 0;
+            }
+            #main {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+        <script type="text/javascript">
+
+        var dt = [];
+
+        function onReady() {
+            webix.ui({
+                container: "main",
+                id: "layout",
+                cols: [
+                    {
+                        rows: [
+                            {
+                                header: "Files",
+                                body:
+                                    {
+                                        view: "list",
+                                        id: "files",
+                                        template: "#filename#",
+                                        data: dt,
+                                    },
+                            },
+                        ],
+                    },
+                ],
+            });
+        }
+        $(document).ready(function() {
+            new QWebChannel(qt.webChannelTransport, function(channel) {
+                window.mainWindow = channel.objects.mainWindow;
+                window.mainWindow.test.connect(function(arr) {
+                    for(var i = 0; i < arr.length; i++) {
+                        $$("files").add({
+                            filename: arr[i].name,
+                        });
+                    }
+                    console.log(arr);
+                });
+                onReady();
+                window.mainWindow.htmlInit();
+                //window.mainWindow.addDirectory("/home/tomoaki-usual/hdd/Downloads");
+            });
+        });
+        </script>
+    </head>
+    <body>
+        <div id="main"></div>
+    </body>
+</html>

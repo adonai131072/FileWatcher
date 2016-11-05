@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+    <head>
+        <meta http-equiv="Content-Type" content="text/html; charset=utf-8" />
+        <link rel="stylesheet" href="qrc:///webix/webix.css" type="text/css" media="screen" charset="utf-8">
+        <script type="text/javascript" src="qrc:///qtwebchannel/qwebchannel.js"></script>
+        <script type="text/javascript" src="qrc:///jquery-3.1.0.min.js"></script>
+        <script src="qrc:///webix//webix.js" type="text/javascript" charset="utf-8"></script>
+        <style type="text/css">
+            html {
+                height: 100%;
+            }
+            body {
+                height: 100%;
+                margin: 0;
+            }
+            #main {
+                width: 100%;
+                height: 100%;
+            }
+        </style>
+        <script type="text/javascript">
+
+        function onReady() {
+            webix.ui({
+                container: "main",
+                id: "layout",
+                rows: [
+                    {
+                        view: "tabview",
+                        cells: [
+                            {
+                                header: "General",
+                                body: {
+                                    view: "form",
+                                    id: "FGeneral",
+                                    elements: [
+                                        { view: "text", label: "Directory", name: "directory" },
+                                    ],
+                                },
+                            },
+                            {
+                                header: "Scripts",
+                                body: {
+                                view: "form",
+                                id: "FScripts",
+                                elements: [
+                                    { view: "text", label: "Path", name: "path" },
+                                ],
+                            },
+                            },
+                        ],
+                    },
+                    {
+                        cols: [
+                            {
+                                id: "cancel",
+                                view: "button",
+                                value: "Cancel",
+                                type: "form",
+                                on:
+                                {
+                                    "onItemClick": function(id, e, trg) {
+                                        window.settings.canceled();
+                                    },
+                                },
+                            },
+                            {
+                                id: "ok",
+                                view: "button",
+                                value: "OK",
+                                on:
+                                {
+                                    "onItemClick": function(id, e, trg) {
+                                        var setting = {
+                                            "general": $$("FGeneral").getValues(),
+                                            "scripts": $$("FScripts").getValues(),
+                                        };
+                                        window.settings.OKed(JSON.stringify(setting));
+                                    },
+                                },
+                            },
+                        ],
+                    },
+                ],
+            });
+        }
+        $(document).ready(function() {
+            new QWebChannel(qt.webChannelTransport, function(channel) {
+                window.settings = channel.objects.settings;
+                window.settings.init.connect(function(arr) {
+                    $$("FGeneral").setValues(arr.general);
+                    $$("FScripts").setValues(arr.scripts);
+                });
+                onReady();
+                window.settings.htmlInit();
+            });
+        });
+        </script>
+    </head>
+    <body>
+        <div id="main"></div>
+    </body>
+</html>
